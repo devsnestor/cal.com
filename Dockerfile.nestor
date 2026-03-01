@@ -1,0 +1,37 @@
+# Nestor branding patch on top of official cal.com image.
+# Copies our logo assets and patches the compiled JS bundle to reference them.
+# Uses the same replacement pattern as scripts/replace-placeholder.sh.
+FROM southamerica-east1-docker.pkg.dev/nestor-488910/nestor/calcom-web:latest
+
+WORKDIR /calcom
+
+# Copy Nestor logo assets
+COPY apps/web/public/nestor-logo.png apps/web/public/nestor-logo.png
+COPY apps/web/public/nestor-icon.png apps/web/public/nestor-icon.png
+COPY apps/web/public/favicon-16x16.png apps/web/public/favicon-16x16.png
+COPY apps/web/public/favicon-32x32.png apps/web/public/favicon-32x32.png
+COPY apps/web/public/favicon.ico apps/web/public/favicon.ico
+COPY apps/web/public/apple-touch-icon.png apps/web/public/apple-touch-icon.png
+COPY apps/web/public/android-chrome-192x192.png apps/web/public/android-chrome-192x192.png
+COPY apps/web/public/android-chrome-256x256.png apps/web/public/android-chrome-256x256.png
+COPY apps/web/public/android-chrome-384x384.png apps/web/public/android-chrome-384x384.png
+COPY apps/web/public/android-chrome-512x512.png apps/web/public/android-chrome-512x512.png
+COPY apps/web/public/mstile-70x70.png apps/web/public/mstile-70x70.png
+COPY apps/web/public/mstile-144x144.png apps/web/public/mstile-144x144.png
+COPY apps/web/public/mstile-150x150.png apps/web/public/mstile-150x150.png
+COPY apps/web/public/mstile-310x150.png apps/web/public/mstile-310x150.png
+COPY apps/web/public/mstile-310x310.png apps/web/public/mstile-310x310.png
+COPY apps/web/public/site.webmanifest apps/web/public/site.webmanifest
+COPY apps/web/public/emails/logo.png apps/web/public/emails/logo.png
+
+# Patch compiled JS/JSON files to reference Nestor logos instead of Cal.com SVGs.
+# Mirrors the approach used by scripts/replace-placeholder.sh in the base image.
+RUN for OLD_PATH in "/calcom-logo-white-word.svg" "/cal-logo-word-black.svg" "/cal-com-icon-white.svg"; do \
+      case "$OLD_PATH" in \
+        */calcom-logo-white-word.svg*|*/cal-logo-word-black.svg*) NEW_PATH="/nestor-logo.png" ;; \
+        */cal-com-icon-white.svg*)                                NEW_PATH="/nestor-icon.png" ;; \
+      esac; \
+      for file in $(grep -r -l "$OLD_PATH" apps/web/.next/ apps/web/public/ 2>/dev/null); do \
+        sed -i "s|$OLD_PATH|$NEW_PATH|g" "$file"; \
+      done; \
+    done
