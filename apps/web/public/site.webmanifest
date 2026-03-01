@@ -1,7 +1,7 @@
 {
-    "name": "Cal.com",
-    "short_name": "Cal.com",
-    "description": "Scheduling infrastructure for absolutely everyone.",
+    "name": "Nestor",
+    "short_name": "Nestor",
+    "description": "Conecta con barberos y profesionales de belleza.",
     "icons": [
         {
             "src": "/api/logo?type=android-chrome-192",
