@@ -1,0 +1,28 @@
+steps:
+  # Pull the official cal.com image and retag for our registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'pull'
+      - 'calcom.docker.scarf.sh/calcom/cal.com:latest'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'tag'
+      - 'calcom.docker.scarf.sh/calcom/cal.com:latest'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/nestor/calcom-web:latest'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/nestor/calcom-web:latest'
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/nestor/calcom-web:latest'
+
+substitutions:
+  _REGION: southamerica-east1
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1800s'
